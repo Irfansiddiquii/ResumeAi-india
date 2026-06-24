@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ResumeAI India — Result Page Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#08090c;--surface:#101319;--surface2:#141821;--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);
+    --text:#eceef3;--muted:#9aa1ad;--faint:#6b7280;
+    --primary:#7c7ff5;--violet:#a855f7;--green:#34d399;--cyan:#22d3ee;--amber:#fbbf24;--red:#fb7185;--radius:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.5}
+  a{color:inherit;text-decoration:none}
+  .container{max-width:1080px;margin:0 auto;padding:0 24px}
+  .btn{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:10px;font-weight:600;font-size:13.5px;cursor:pointer;border:1px solid transparent;transition:.2s}
+  .btn-primary{background:linear-gradient(180deg,#7c7ff5,#5b5ef0);color:#fff;box-shadow:0 6px 20px -8px rgba(124,127,245,.8)}
+  .btn-ghost{background:rgba(255,255,255,.04);border-color:var(--border);color:var(--text)}
+  .btn-ghost:hover{background:rgba(255,255,255,.08)}
+  .badge{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 11px;border-radius:999px;font-size:12px;font-weight:600;border:1px solid var(--border)}
+  .badge.ai{background:rgba(124,127,245,.12);color:#c4b5fd;border-color:rgba(124,127,245,.3)}
+
+  nav{position:sticky;top:0;z-index:40;backdrop-filter:blur(12px);background:rgba(8,9,12,.7);border-bottom:1px solid var(--border)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:700}
+  .logo-mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#7c7ff5,#a855f7);display:grid;place-items:center}
+
+  .top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin:30px 0 18px;flex-wrap:wrap}
+  .top h1{font-size:24px;letter-spacing:-.6px}
+  .top .meta{color:var(--muted);font-size:13px;margin-top:6px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .actions{display:flex;gap:10px;flex-wrap:wrap}
+
+  .card{border:1px solid var(--border);border-radius:var(--radius);background:linear-gradient(180deg,var(--surface),rgba(16,19,25,.5))}
+  .card.pad{padding:22px}
+  .card h3{font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--faint);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+
+  /* HERO SUMMARY (Stripe-style metric header) */
+  .summary{display:grid;grid-template-columns:1.15fr 1fr;gap:16px;margin-bottom:16px}
+  @media(max-width:840px){.summary{grid-template-columns:1fr}}
+  .hero-card{position:relative;overflow:hidden;padding:26px;display:flex;gap:26px;align-items:center}
+  .hero-card::before{content:"";position:absolute;inset:-40% 40% auto -10%;height:240px;background:radial-gradient(closest-side,rgba(52,211,153,.18),transparent);pointer-events:none}
+  .gauge{position:relative;width:150px;height:150px;flex:none}
+  .gauge .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .gauge .center b{font-size:42px;font-weight:800;letter-spacing:-1.5px;line-height:1}
+  .gauge .center small{color:var(--muted);font-size:11px;letter-spacing:.5px;margin-top:3px}
+  .verdict h2{font-size:22px;letter-spacing:-.5px;display:flex;align-items:center;gap:12px}
+  .grade{display:inline-grid;place-items:center;width:46px;height:46px;border-radius:12px;font-weight:800;font-size:22px}
+  .grade.B{background:rgba(52,211,153,.16);color:#34d399;border:1px solid rgba(52,211,153,.35)}
+  .verdict p{color:var(--muted);font-size:14px;margin-top:8px;max-width:320px}
+
+  .tiles{display:grid;grid-template-rows:repeat(3,1fr);gap:12px}
+  .tile{border:1px solid var(--border);border-radius:13px;padding:14px 16px;background:var(--surface);display:flex;align-items:center;gap:14px}
+  .tile .ico{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-size:16px}
+  .tile .val{font-weight:800;font-size:20px;letter-spacing:-.5px}
+  .tile .lab{color:var(--muted);font-size:12.5px}
+  .mini{flex:1}
+  .bar{height:6px;border-radius:6px;background:rgba(255,255,255,.07);overflow:hidden;margin-top:7px}
+  .bar i{display:block;height:100%;border-radius:6px}
+
+  /* GRADE SCALE */
+  .scale{display:flex;gap:8px;margin-top:6px}
+  .seg{flex:1;text-align:center;padding:10px 0;border-radius:10px;border:1px solid var(--border);background:var(--surface);font-weight:700;color:var(--faint);font-size:14px;position:relative}
+  .seg small{display:block;font-weight:500;font-size:10.5px;color:var(--faint);margin-top:2px}
+  .seg.active{color:#fff;border-color:transparent;background:linear-gradient(180deg,rgba(52,211,153,.25),rgba(34,211,238,.12));box-shadow:0 0 0 1px rgba(52,211,153,.4) inset}
+  .seg.active small{color:#9ff0cf}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+  @media(max-width:840px){.grid2{grid-template-columns:1fr}}
+
+  /* CATEGORY BREAKDOWN (ResumeWorded) */
+  .catrow{display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--border)}
+  .catrow:last-child{border-bottom:0}
+  .catrow .name{width:120px;font-size:14px;font-weight:500}
+  .catrow .bar{flex:1;margin:0;height:8px}
+  .catrow .sc{width:46px;text-align:right;font-weight:700;font-size:14px}
+
+  .list li{display:flex;gap:10px;font-size:14px;padding:9px 0;color:var(--text)}
+  .list li .i{flex:none;margin-top:1px}
+  .ok .i{color:var(--green)} .warn .i{color:var(--amber)}
+
+  /* KEYWORDS */
+  .kw-head{display:flex;align-items:center;gap:18px;margin-bottom:16px}
+  .ring{position:relative;width:78px;height:78px;flex:none}
+  .ring .c{position:absolute;inset:0;display:grid;place-items:center;font-weight:800;font-size:18px}
+  .chip{display:inline-block;padding:6px 11px;border-radius:9px;font-size:12.5px;margin:0 7px 8px 0;font-weight:500}
+  .chip.miss{background:rgba(251,113,133,.12);color:#fda4af;border:1px solid rgba(251,113,133,.25)}
+  .chip.ok{background:rgba(52,211,153,.12);color:#6ee7b7;border:1px solid rgba(52,211,153,.25)}
+  .kw-lab{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--faint);margin:14px 0 10px}
+
+  /* RECOMMENDATIONS */
+  .rec{border:1px solid var(--border);border-radius:13px;padding:16px;margin-bottom:12px;background:var(--surface)}
+  .rec .h{display:flex;gap:11px;align-items:flex-start;font-weight:600;font-size:14.5px}
+  .rec .num{flex:none;width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,#7c7ff5,#a855f7);display:grid;place-items:center;font-size:12px;font-weight:700;color:#fff}
+  .ba{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:13px}
+  @media(max-width:600px){.ba{grid-template-columns:1fr}}
+  .ba div{border-radius:10px;padding:11px 13px;font-size:13px}
+  .before{background:rgba(251,113,133,.07);border:1px solid rgba(251,113,133,.2)}
+  .after{background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.2)}
+  .ba .t{font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px}
+  .before .t{color:#fda4af}.after .t{color:#6ee7b7}
+
+  /* OPTIMIZED PREVIEW */
+  .doc{border:1px solid var(--border);border-radius:12px;padding:20px;background:#0c0e13}
+  .doc .sum{font-size:14px;line-height:1.6}
+  .doc ul{margin:14px 0 0 18px;color:var(--text)}
+  .doc li{font-size:14px;margin:8px 0}
+
+  .save{display:flex;align-items:center;justify-content:space-between;gap:16px;border:1px dashed var(--border2);border-radius:14px;padding:20px 22px;margin-top:16px;background:rgba(124,127,245,.04);flex-wrap:wrap}
+  .badge-note{position:fixed;bottom:14px;left:14px;z-index:99;background:#101319;border:1px solid var(--border2);border-radius:10px;padding:8px 12px;font-size:12px;color:var(--muted)}
+  .section-gap{margin-top:16px}
+  @media(max-width:600px){.hero-card{flex-direction:column;text-align:center}.scale{flex-wrap:wrap}.seg{min-width:60px}}
+</style>
+</head>
+<body>
+<div class="badge-note">🎨 MOCKUP · Result Page · 70% ResumeWorded / 30% Stripe</div>
+
+<nav><div class="container nav-in">
+  <div class="logo"><span class="logo-mark">📄</span> ResumeAI <span style="color:var(--faint);font-weight:500">India</span></div>
+  <a class="btn btn-ghost" href="#">← Analyze another</a>
+</div></nav>
+
+<div class="container">
+  <div class="top">
+    <div>
+      <h1>Your resume analysis</h1>
+      <div class="meta">Rahul_Sharma_Resume.pdf <span>·</span> <span class="badge ai">✨ AI analysis</span> <span>·</span> Job-matched against “Senior Backend Engineer”</div>
+    </div>
+    <div class="actions">
+      <a class="btn btn-ghost" href="#">⤓ HTML</a>
+      <a class="btn btn-ghost" href="#">↗ Share</a>
+      <a class="btn btn-primary" href="#">⤓ Download PDF</a>
+    </div>
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="summary">
+    <div class="card hero-card">
+      <div class="gauge">
+        <svg width="150" height="150" viewBox="0 0 150 150">
+          <circle cx="75" cy="75" r="64" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="13"/>
+          <circle cx="75" cy="75" r="64" fill="none" stroke="url(#g)" stroke-width="13" stroke-linecap="round" stroke-dasharray="402" stroke-dashoffset="117" transform="rotate(-90 75 75)"/>
+          <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs>
+        </svg>
+        <div class="center"><b>71</b><small>ATS SCORE / 100</small></div>
+      </div>
+      <div class="verdict">
+        <h2><span class="grade B">B</span> Good — almost there</h2>
+        <p>Your resume is solid and ATS-readable. Fix the 3 high-impact items below to push into the A range.</p>
+      </div>
+    </div>
+    <div class="tiles">
+      <div class="tile"><span class="ico" style="background:rgba(124,127,245,.14);color:#c4b5fd">📊</span><div class="mini"><div class="lab">ATS Compatibility</div><div class="bar"><i style="width:71%;background:linear-gradient(90deg,#34d399,#22d3ee)"></i></div></div><div class="val">71</div></div>
+      <div class="tile"><span class="ico" style="background:rgba(168,85,247,.14);color:#d8b4fe">💪</span><div class="mini"><div class="lab">Resume Strength</div><div class="bar"><i style="width:62%;background:linear-gradient(90deg,#7c7ff5,#a855f7)"></i></div></div><div class="val">62</div></div>
+      <div class="tile"><span class="ico" style="background:rgba(34,211,238,.14);color:#67e8f9">🎯</span><div class="mini"><div class="lab">Job Match</div><div class="bar"><i style="width:78%;background:linear-gradient(90deg,#22d3ee,#34d399)"></i></div></div><div class="val">78%</div></div>
+    </div>
+  </div>
+
+  <!-- GRADE SCALE -->
+  <div class="card pad">
+    <h3>📈 Resume Grade</h3>
+    <div class="scale">
+      <div class="seg">D<small>0–54</small></div>
+      <div class="seg">C<small>55–69</small></div>
+      <div class="seg active">B<small>70–79</small></div>
+      <div class="seg">A<small>80–89</small></div>
+      <div class="seg">A+<small>90–100</small></div>
+    </div>
+  </div>
+
+  <!-- BREAKDOWN + KEYWORDS -->
+  <div class="grid2">
+    <div class="card pad">
+      <h3>🧩 Score breakdown</h3>
+      <div class="catrow"><span class="name">Formatting</span><div class="bar"><i style="width:82%;background:#34d399"></i></div><span class="sc">82</span></div>
+      <div class="catrow"><span class="name">Sections</span><div class="bar"><i style="width:90%;background:#34d399"></i></div><span class="sc">90</span></div>
+      <div class="catrow"><span class="name">Keywords</span><div class="bar"><i style="width:64%;background:#fbbf24"></i></div><span class="sc">64</span></div>
+      <div class="catrow"><span class="name">Impact</span><div class="bar"><i style="width:58%;background:#fbbf24"></i></div><span class="sc">58</span></div>
+      <div class="catrow"><span class="name">Length</span><div class="bar"><i style="width:88%;background:#34d399"></i></div><span class="sc">88</span></div>
+    </div>
+    <div class="card pad">
+      <h3>🔑 Keyword analysis</h3>
+      <div class="kw-head">
+        <div class="ring">
+          <svg width="78" height="78" viewBox="0 0 78 78"><circle cx="39" cy="39" r="32" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="8"/><circle cx="39" cy="39" r="32" fill="none" stroke="#34d399" stroke-width="8" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="44" transform="rotate(-90 39 39)"/></svg>
+          <div class="c">78%</div>
+        </div>
+        <div><div style="font-weight:600">Strong keyword match</div><div style="color:var(--muted);font-size:13px">5 of 9 key terms found. Add the 4 missing ones where they truly apply.</div></div>
+      </div>
+      <div class="kw-lab" style="color:#fda4af">Missing (4)</div>
+      <span class="chip miss">Kubernetes</span><span class="chip miss">CI/CD</span><span class="chip miss">GraphQL</span><span class="chip miss">Redis</span>
+      <div class="kw-lab" style="color:#6ee7b7">Matched (5)</div>
+      <span class="chip ok">React</span><span class="chip ok">Node.js</span><span class="chip ok">AWS</span><span class="chip ok">PostgreSQL</span><span class="chip ok">Python</span>
+    </div>
+  </div>
+
+  <!-- STRENGTHS / WEAKNESSES -->
+  <div class="grid2">
+    <div class="card pad">
+      <h3 style="color:#6ee7b7">✓ Strengths</h3>
+      <ul class="list" style="list-style:none">
+        <li class="ok"><span class="i">●</span> Well-structured with clearly labelled sections.</li>
+        <li class="ok"><span class="i">●</span> Strong action verbs describing your impact.</li>
+        <li class="ok"><span class="i">●</span> Achievements quantified with real metrics.</li>
+        <li class="ok"><span class="i">●</span> Clean work timeline that ATS parse easily.</li>
+      </ul>
+    </div>
+    <div class="card pad">
+      <h3 style="color:#fcd34d">⚠ Weaknesses</h3>
+      <ul class="list" style="list-style:none">
+        <li class="warn"><span class="i">●</span> Missing 4 keywords from the target job.</li>
+        <li class="warn"><span class="i">●</span> Summary is a little generic — tailor it.</li>
+        <li class="warn"><span class="i">●</span> A few bullets lack measurable outcomes.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- RECOMMENDATIONS -->
+  <div class="card pad section-gap">
+    <h3>💡 AI recommendations</h3>
+    <div class="rec">
+      <div class="h"><span class="num">1</span> Add metrics to your project bullets to show measurable impact.</div>
+      <div class="ba">
+        <div class="before"><div class="t">Before</div>Improved the team's workflow</div>
+        <div class="after"><div class="t">After</div>Streamlined the team's workflow, cutting delivery time by 30%</div>
+      </div>
+    </div>
+    <div class="rec">
+      <div class="h"><span class="num">2</span> Start each bullet with a strong action verb.</div>
+      <div class="ba">
+        <div class="before"><div class="t">Before</div>Responsible for handling customer queries</div>
+        <div class="after"><div class="t">After</div>Resolved 50+ daily customer queries, improving CSAT by 18%</div>
+      </div>
+    </div>
+    <div class="rec"><div class="h"><span class="num">3</span> Incorporate Kubernetes, CI/CD and GraphQL where you have genuine experience to raise your job-match score.</div></div>
+  </div>
+
+  <!-- OPTIMIZED PREVIEW -->
+  <div class="card pad section-gap">
+    <h3>✨ Optimized resume preview</h3>
+    <div class="doc">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--faint);margin-bottom:8px">Professional summary</div>
+      <div class="sum">Full Stack Developer with 6+ years of experience in React, Node.js, PostgreSQL and AWS. Focused on delivering measurable, results-driven impact and aligning closely with roles requiring Kubernetes, CI/CD and GraphQL.</div>
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--faint);margin:16px 0 4px">Suggested bullet points</div>
+      <ul>
+        <li>Lead with your React work — open with a strong verb and a metric, e.g. “Built a React feature that cut load time by 35%.”</li>
+        <li>Quantify outcomes with numbers, %, ₹ or time saved.</li>
+        <li>Keep results like: “Led migration to React and Node.js, reducing page load time by 40%.”</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- DOWNLOAD + OPTIONAL ACCOUNT -->
+  <div class="card pad section-gap" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:radial-gradient(500px 200px at 0% 0%,rgba(124,127,245,.12),transparent),var(--surface)">
+    <div><div style="font-weight:700;font-size:16px">Download your full report</div><div style="color:var(--muted);font-size:13.5px">Free, no account required — keep a copy of your analysis.</div></div>
+    <div class="actions"><a class="btn btn-primary" href="#">⤓ Download PDF</a><a class="btn btn-ghost" href="#">⤓ HTML</a><a class="btn btn-ghost" href="#">↗ Share link</a></div>
+  </div>
+
+  <div class="save">
+    <div style="display:flex;gap:12px;align-items:center"><span style="font-size:22px">🔖</span><div><div style="font-weight:600">Want to save your reports and track progress?</div><div style="color:var(--muted);font-size:13px">Create a free account later — you never have to. Your report is already free.</div></div></div>
+    <a class="btn btn-ghost" href="#" style="opacity:.6">Accounts coming soon</a>
+  </div>
+
+  <div style="height:48px"></div>
+</div>
+</body>
+</html>
