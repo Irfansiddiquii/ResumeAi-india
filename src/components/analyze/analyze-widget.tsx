@@ -18,7 +18,8 @@ import { saveResult } from "@/lib/analysis/storage";
 import type { AnalyzeApiResponse, ApiError } from "@/types/analysis";
 
 const MAX_MB = 5;
-const ACCEPT = ".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+const ACCEPT =
+  ".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
 function isAcceptedFile(file: File): boolean {
   const name = file.name.toLowerCase();
@@ -104,11 +105,11 @@ export function AnalyzeWidget({ compact = false }: { compact?: boolean }) {
         onDragLeave={() => setDragActive(false)}
         onDrop={onDrop}
         className={cn(
-          "group relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed bg-background px-6 text-center transition-colors",
+          "group relative flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed bg-white/[0.02] px-6 text-center transition-all",
           compact ? "py-8" : "py-12",
           dragActive
-            ? "border-primary bg-primary/5"
-            : "border-input hover:border-primary/60 hover:bg-accent/40"
+            ? "border-primary bg-primary/10"
+            : "border-white/15 hover:border-primary/60 hover:bg-white/[0.04]"
         )}
       >
         <input
@@ -121,7 +122,7 @@ export function AnalyzeWidget({ compact = false }: { compact?: boolean }) {
 
         {file ? (
           <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/15 text-primary ring-1 ring-primary/25">
               <FileText className="h-5 w-5" />
             </span>
             <div className="text-left">
@@ -138,7 +139,7 @@ export function AnalyzeWidget({ compact = false }: { compact?: boolean }) {
                 e.stopPropagation();
                 setFile(null);
               }}
-              className="ml-2 rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
+              className="ml-2 rounded-md p-1 text-muted-foreground hover:bg-white/10 hover:text-foreground"
               aria-label="Remove file"
             >
               <X className="h-4 w-4" />
@@ -146,11 +147,11 @@ export function AnalyzeWidget({ compact = false }: { compact?: boolean }) {
           </div>
         ) : (
           <>
-            <span className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <span className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/12 text-primary ring-1 ring-primary/20">
               <UploadCloud className="h-6 w-6" />
             </span>
             <p className="text-sm font-medium">
-              Drag & drop your resume, or{" "}
+              Drag &amp; drop your resume, or{" "}
               <span className="text-primary">browse</span>
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
@@ -165,13 +166,10 @@ export function AnalyzeWidget({ compact = false }: { compact?: boolean }) {
         <button
           type="button"
           onClick={() => setShowJd((s) => !s)}
-          className="flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground"
+          className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
         >
           <ChevronDown
-            className={cn(
-              "h-4 w-4 transition-transform",
-              showJd && "rotate-180"
-            )}
+            className={cn("h-4 w-4 transition-transform", showJd && "rotate-180")}
           />
           Add a job description (optional, improves match accuracy)
         </button>
@@ -185,14 +183,14 @@ export function AnalyzeWidget({ compact = false }: { compact?: boolean }) {
               placeholder="Paste the job description here to get a job-match score and the exact keywords you're missing…"
               value={jobDescription}
               onChange={(e) => setJobDescription(e.target.value)}
-              className="min-h-[140px]"
+              className="min-h-[140px] bg-white/[0.02]"
             />
           </div>
         )}
       </div>
 
       {error && (
-        <p className="mt-3 rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        <p className="mt-3 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
           {error}
         </p>
       )}
@@ -215,7 +213,7 @@ export function AnalyzeWidget({ compact = false }: { compact?: boolean }) {
           </>
         )}
       </Button>
-      <p className="mt-2 text-center text-xs text-muted-foreground">
+      <p className="mt-2.5 text-center text-xs text-muted-foreground">
         Free forever · No sign-up · No credit card
       </p>
     </div>

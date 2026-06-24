@@ -82,6 +82,10 @@ export const analysisResultSchema = z.object({
     strength: z.number(),
     match: z.number().nullable(),
   }),
+  breakdown: z
+    .array(z.object({ label: z.string(), score: z.number() }))
+    .max(20)
+    .optional(),
   missingKeywords: z.array(z.string()).max(100),
   matchedKeywords: z.array(z.string()).max(100),
   strengths: z.array(z.string()).max(50),
