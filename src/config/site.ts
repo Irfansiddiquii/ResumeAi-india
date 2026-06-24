@@ -3,8 +3,12 @@ export const siteConfig = {
   shortName: "ResumeAI",
   description:
     "Free ATS resume checker for India. Upload your resume, get an instant ATS score, missing keywords, job-match percentage and AI-powered improvement suggestions. No login required.",
-  // Read from env in production; falls back to localhost in dev.
-  url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+  // Canonical site URL. In production set NEXT_PUBLIC_SITE_URL; otherwise we
+  // fall back to the deployed Vercel domain (never localhost) so generated
+  // reports, sitemaps and share links always reference the live site.
+  url:
+    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
+    "https://resume-ai-india.vercel.app",
   locale: "en_IN",
   keywords: [
     "ATS resume checker",

@@ -21,7 +21,10 @@ function list(items: string[]): string {
 }
 
 /** Self-contained, printable HTML report (no external assets). */
-export function buildHtmlReport(result: AnalysisResult): string {
+export function buildHtmlReport(
+  result: AnalysisResult,
+  baseUrl: string = siteConfig.url
+): string {
   const { scores } = result;
   const scoreCard = (label: string, value: number) => `
     <div class="score">
@@ -123,7 +126,7 @@ export function buildHtmlReport(result: AnalysisResult): string {
 
     <div class="footer">
       Created with ${esc(siteConfig.name)} — free ATS resume checker. ${esc(
-        siteConfig.url
+        baseUrl
       )}
     </div>
   </div>

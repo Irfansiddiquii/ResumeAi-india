@@ -102,7 +102,13 @@ function Bulleted({ items }: { items: string[] }) {
   );
 }
 
-function ReportDocument({ result }: { result: AnalysisResult }) {
+function ReportDocument({
+  result,
+  baseUrl,
+}: {
+  result: AnalysisResult;
+  baseUrl: string;
+}) {
   const { scores } = result;
   return (
     <Document
@@ -202,13 +208,16 @@ function ReportDocument({ result }: { result: AnalysisResult }) {
         </View>
 
         <Text style={styles.footer} fixed>
-          Created with {siteConfig.name} — free ATS resume checker · {siteConfig.url}
+          Created with {siteConfig.name} — free ATS resume checker · {baseUrl}
         </Text>
       </Page>
     </Document>
   );
 }
 
-export async function buildPdfReport(result: AnalysisResult): Promise<Buffer> {
-  return renderToBuffer(<ReportDocument result={result} />);
+export async function buildPdfReport(
+  result: AnalysisResult,
+  baseUrl: string = siteConfig.url
+): Promise<Buffer> {
+  return renderToBuffer(<ReportDocument result={result} baseUrl={baseUrl} />);
 }
