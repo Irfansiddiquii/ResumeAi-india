@@ -29,6 +29,8 @@ export interface AnalysisResult {
   resumeFilename: string;
   hasJobDescription: boolean;
   scores: Scores;
+  /** Per-category sub-scores derived from the same signals (for the UI). */
+  breakdown: { label: string; score: number }[];
   missingKeywords: string[];
   matchedKeywords: string[];
   strengths: string[];

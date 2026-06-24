@@ -21,7 +21,7 @@ export async function analyzeResume({
   resumeFilename,
   jobDescription,
 }: AnalyzeInput): Promise<AnalysisResult> {
-  const { scores } = computeScores(resumeText, jobDescription);
+  const { scores, breakdown } = computeScores(resumeText, jobDescription);
 
   let engine: AnalysisResult["engine"] = "rule-based";
   let qualitative = ruleBasedAnalysis(resumeText, jobDescription);
@@ -56,6 +56,7 @@ export async function analyzeResume({
     resumeFilename,
     hasJobDescription: Boolean(jobDescription),
     scores,
+    breakdown,
     missingKeywords: qualitative.missingKeywords,
     matchedKeywords: qualitative.matchedKeywords,
     strengths: qualitative.strengths,

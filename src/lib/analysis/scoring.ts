@@ -20,6 +20,7 @@ const SECTION_HINTS = [
 
 interface ScoreBreakdown {
   scores: Scores;
+  breakdown: { label: string; score: number }[];
   signals: {
     wordCount: number;
     sectionsFound: number;
@@ -106,12 +107,38 @@ export function computeScores(
     match = matchKeywords(resumeText, jobDescription).matchPercent;
   }
 
+  // ── Category breakdown (derived from the same signals, for the UI) ──
+  const breakdown: { label: string; score: number }[] = [
+    {
+      label: "Structure",
+      score: clamp(
+        ((Math.min(sectionsFound, 5) / 5) * 0.6 +
+          (Math.min(bulletCount, 8) / 8) * 0.4) *
+          100
+      ),
+    },
+    { label: "Contact", score: clamp((hasEmail ? 60 : 0) + (hasPhone ? 40 : 0)) },
+    {
+      label: "Impact",
+      score: clamp(
+        ((Math.min(quantifiedBullets, 10) / 10) * 0.5 +
+          (Math.min(actionVerbCount, 12) / 12) * 0.5) *
+          100
+      ),
+    },
+    { label: "Length", score: clamp(lengthFit(wordCount, 100)) },
+  ];
+  if (match !== null) {
+    breakdown.splice(2, 0, { label: "Keywords", score: clamp(match) });
+  }
+
   return {
     scores: {
       ats: clamp(ats),
       strength: clamp(strength),
       match: match === null ? null : clamp(match),
     },
+    breakdown,
     signals: {
       wordCount,
       sectionsFound,
