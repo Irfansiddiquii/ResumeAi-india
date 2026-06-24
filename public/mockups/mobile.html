@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ResumeAI India — Mobile Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{--bg:#08090c;--surface:#101319;--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--text:#eceef3;--muted:#9aa1ad;--faint:#6b7280;--green:#34d399;--cyan:#22d3ee;--violet:#a855f7;--primary:#7c7ff5;--red:#fb7185;--amber:#fbbf24}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Inter,system-ui,sans-serif;background:radial-gradient(800px 500px at 50% -10%,rgba(124,127,245,.12),transparent),var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;padding:40px 16px 80px}
+  .head{text-align:center;max-width:680px;margin:0 auto 40px}
+  .head h1{font-size:28px;letter-spacing:-.8px}
+  .head p{color:var(--muted);margin-top:8px;font-size:14px}
+  .stage{display:flex;gap:40px;justify-content:center;flex-wrap:wrap;align-items:flex-start}
+  .phone-wrap{text-align:center}
+  .phone-label{color:var(--faint);font-size:12.5px;margin-top:14px;letter-spacing:.4px;text-transform:uppercase}
+  /* PHONE FRAME */
+  .phone{width:320px;height:680px;border-radius:44px;background:#000;border:1px solid var(--border2);padding:11px;box-shadow:0 50px 100px -30px rgba(0,0,0,.9),0 0 0 2px rgba(255,255,255,.03)}
+  .notch{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:120px;height:26px;background:#000;border-radius:0 0 16px 16px;z-index:5}
+  .screen{position:relative;width:100%;height:100%;border-radius:34px;overflow:hidden;background:var(--bg);overflow-y:auto;scrollbar-width:none}
+  .screen::-webkit-scrollbar{display:none}
+  /* shared mobile bits */
+  .mnav{position:sticky;top:0;display:flex;align-items:center;justify-content:space-between;padding:14px 16px;backdrop-filter:blur(10px);background:rgba(8,9,12,.8);border-bottom:1px solid var(--border);z-index:3}
+  .logo{display:flex;align-items:center;gap:7px;font-weight:700;font-size:14px}
+  .lm{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,#7c7ff5,#a855f7);display:grid;place-items:center;font-size:12px}
+  .ham{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);display:grid;place-items:center;color:var(--muted)}
+  .mpad{padding:22px 18px}
+  .pill{display:inline-flex;align-items:center;gap:7px;height:26px;padding:0 12px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.03);font-size:11.5px;color:var(--muted)}
+  .dot{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+  .mh1{font-size:30px;line-height:1.08;font-weight:800;letter-spacing:-1px;margin-top:14px}
+  .grad{background:linear-gradient(110deg,#fff,#a5b4fc 70%,#c4b5fd);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .msub{color:var(--muted);font-size:14px;margin-top:12px}
+  .btn{display:flex;align-items:center;justify-content:center;gap:7px;height:46px;border-radius:11px;font-weight:600;font-size:14px;width:100%}
+  .bp{background:linear-gradient(180deg,#7c7ff5,#5b5ef0);color:#fff;box-shadow:0 8px 24px -10px rgba(124,127,245,.9)}
+  .bg{background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text)}
+  .upload{margin-top:18px;border:1.5px dashed var(--border2);border-radius:16px;padding:24px 16px;text-align:center;background:rgba(255,255,255,.02)}
+  .upi{width:44px;height:44px;border-radius:12px;background:rgba(124,127,245,.14);color:#c4b5fd;display:grid;place-items:center;margin:0 auto 10px;font-size:20px}
+  .feat{display:flex;gap:12px;align-items:center;border:1px solid var(--border);border-radius:13px;padding:13px;margin-top:10px;background:var(--surface)}
+  .fi{width:36px;height:36px;border-radius:10px;background:rgba(124,127,245,.12);color:#a5b4fc;display:grid;place-items:center;flex:none}
+  .feat b{font-size:14px}.feat span{color:var(--muted);font-size:12px}
+  .sticky-cta{position:sticky;bottom:0;padding:12px 16px;background:linear-gradient(0deg,#08090c 70%,transparent);border-top:1px solid var(--border)}
+  /* result mobile */
+  .gauge{position:relative;width:140px;height:140px;margin:0 auto}
+  .gauge .c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .gauge .c b{font-size:40px;font-weight:800;letter-spacing:-1.5px}
+  .gauge .c small{color:var(--muted);font-size:10.5px}
+  .grade{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:11px;font-weight:800;font-size:19px;background:rgba(52,211,153,.16);color:#34d399;border:1px solid rgba(52,211,153,.35)}
+  .card{border:1px solid var(--border);border-radius:14px;background:var(--surface);padding:16px;margin-top:12px}
+  .card h4{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--faint);margin-bottom:12px}
+  .scale{display:flex;gap:5px}
+  .seg{flex:1;text-align:center;padding:7px 0;border-radius:8px;border:1px solid var(--border);font-size:12px;font-weight:700;color:var(--faint)}
+  .seg.on{color:#fff;background:linear-gradient(180deg,rgba(52,211,153,.25),rgba(34,211,238,.1));box-shadow:0 0 0 1px rgba(52,211,153,.4) inset}
+  .tile{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--border)}
+  .tile:last-child{border-bottom:0}
+  .tile .ic{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:14px;flex:none}
+  .bar{height:6px;border-radius:6px;background:rgba(255,255,255,.07);overflow:hidden;margin-top:6px}
+  .bar i{display:block;height:100%;border-radius:6px}
+  .val{font-weight:800;font-size:16px}
+  .chip{display:inline-block;padding:5px 9px;border-radius:8px;font-size:11.5px;margin:0 5px 6px 0}
+  .miss{background:rgba(251,113,133,.12);color:#fda4af;border:1px solid rgba(251,113,133,.25)}
+  .okc{background:rgba(52,211,153,.12);color:#6ee7b7;border:1px solid rgba(52,211,153,.25)}
+  .badge-note{position:fixed;bottom:14px;left:14px;z-index:99;background:#101319;border:1px solid var(--border2);border-radius:10px;padding:8px 12px;font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="badge-note">🎨 MOCKUP · Mobile-first responsive</div>
+<div class="head">
+  <h1>Mobile-first responsive design</h1>
+  <p>Single-column layouts, a sticky primary CTA, large tap targets, collapsible sections and the score-first hierarchy carried over from desktop.</p>
+</div>
+
+<div class="stage">
+  <!-- PHONE 1: HOMEPAGE -->
+  <div class="phone-wrap">
+    <div class="phone" style="position:relative"><div class="notch"></div>
+      <div class="screen">
+        <div class="mnav"><div class="logo"><span class="lm">📄</span> ResumeAI</div><div class="ham">≡</div></div>
+        <div class="mpad">
+          <span class="pill"><span class="dot"></span> Free · No login</span>
+          <div class="mh1">Beat the ATS.<br/><span class="grad">Land the interview.</span></div>
+          <p class="msub">Instant ATS score, missing keywords and AI fixes — free, in seconds.</p>
+          <div class="upload">
+            <div class="upi">⬆️</div>
+            <div style="font-weight:600;font-size:14px">Drop your resume</div>
+            <div style="color:var(--faint);font-size:12px;margin-top:3px">PDF or DOCX · up to 5MB</div>
+          </div>
+          <div style="margin-top:18px;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--faint)">What you get</div>
+          <div class="feat"><span class="fi">📊</span><div><b>ATS Score & Grade</b><br/><span>0–100 with A+ to D grade</span></div></div>
+          <div class="feat"><span class="fi">🔑</span><div><b>Missing Keywords</b><br/><span>Match against any job</span></div></div>
+          <div class="feat"><span class="fi">✨</span><div><b>AI Suggestions</b><br/><span>Rewrite bullets that win</span></div></div>
+        </div>
+        <div class="sticky-cta"><div class="btn bp">Analyze Resume Free →</div></div>
+      </div>
+    </div>
+    <div class="phone-label">Homepage — mobile</div>
+  </div>
+
+  <!-- PHONE 2: RESULT -->
+  <div class="phone-wrap">
+    <div class="phone" style="position:relative"><div class="notch"></div>
+      <div class="screen">
+        <div class="mnav"><div class="logo"><span class="lm">📄</span> Result</div><div class="ham">⤓</div></div>
+        <div class="mpad">
+          <div style="text-align:center">
+            <div class="gauge">
+              <svg width="140" height="140" viewBox="0 0 140 140"><circle cx="70" cy="70" r="60" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="12"/><circle cx="70" cy="70" r="60" fill="none" stroke="url(#mg)" stroke-width="12" stroke-linecap="round" stroke-dasharray="377" stroke-dashoffset="109" transform="rotate(-90 70 70)"/><defs><linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs></svg>
+              <div class="c"><b>71</b><small>ATS SCORE</small></div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:6px"><span class="grade">B</span><div style="text-align:left"><div style="font-weight:700;font-size:15px">Good — almost there</div><div style="color:var(--muted);font-size:12px">Fix 3 issues to reach A</div></div></div>
+          </div>
+
+          <div class="card"><h4>Resume grade</h4>
+            <div class="scale"><span class="seg">D</span><span class="seg">C</span><span class="seg on">B</span><span class="seg">A</span><span class="seg">A+</span></div>
+          </div>
+
+          <div class="card">
+            <div class="tile"><span class="ic" style="background:rgba(124,127,245,.14);color:#c4b5fd">📊</span><div style="flex:1"><div style="color:var(--muted);font-size:12px">ATS</div><div class="bar"><i style="width:71%;background:linear-gradient(90deg,#34d399,#22d3ee)"></i></div></div><span class="val">71</span></div>
+            <div class="tile"><span class="ic" style="background:rgba(168,85,247,.14);color:#d8b4fe">💪</span><div style="flex:1"><div style="color:var(--muted);font-size:12px">Strength</div><div class="bar"><i style="width:62%;background:linear-gradient(90deg,#7c7ff5,#a855f7)"></i></div></div><span class="val">62</span></div>
+            <div class="tile"><span class="ic" style="background:rgba(34,211,238,.14);color:#67e8f9">🎯</span><div style="flex:1"><div style="color:var(--muted);font-size:12px">Job match</div><div class="bar"><i style="width:78%;background:linear-gradient(90deg,#22d3ee,#34d399)"></i></div></div><span class="val">78%</span></div>
+          </div>
+
+          <div class="card"><h4>Keyword analysis · 78%</h4>
+            <div style="color:#fda4af;font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Missing</div>
+            <span class="chip miss">Kubernetes</span><span class="chip miss">CI/CD</span><span class="chip miss">GraphQL</span>
+            <div style="color:#6ee7b7;font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;margin:10px 0 8px">Matched</div>
+            <span class="chip okc">React</span><span class="chip okc">Node.js</span><span class="chip okc">AWS</span>
+          </div>
+
+          <div class="card"><h4>💡 Top recommendation</h4><div style="font-size:13px">Add metrics to your bullets, e.g. <span style="color:#6ee7b7">“cut delivery time by 30%.”</span></div></div>
+        </div>
+        <div class="sticky-cta"><div class="btn bp">⤓ Download PDF report</div></div>
+      </div>
+    </div>
+    <div class="phone-label">Result — mobile</div>
+  </div>
+</div>
+</body>
+</html>
