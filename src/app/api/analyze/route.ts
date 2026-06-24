@@ -10,6 +10,7 @@ import {
   checkRateLimit,
   getClientIp,
   hashIp,
+  type RateLimitResult,
 } from "@/lib/ratelimit";
 import type { ApiError, AnalyzeApiResponse } from "@/types/analysis";
 import { logUsage } from "@/lib/usage";
@@ -30,13 +31,30 @@ export async function POST(req: NextRequest) {
   // ── Rate limit (no-op if Upstash is not configured) ──
   const ip = getClientIp(req.headers);
   const ipHash = hashIp(ip);
+  let rl: RateLimitResult = { success: true, remaining: 999, limit: 999, reset: 0 };
   try {
-    const rl = await checkRateLimit(ipHash);
+    rl = await checkRateLimit(ipHash);
     if (!rl.success) {
-      return errorResponse(
-        "RATE_LIMITED",
-        "You've reached the free analysis limit. Please try again later.",
-        429
+      const retryAfter = rl.reset
+        ? Math.max(1, Math.ceil((rl.reset - Date.now()) / 1000))
+        : 3600;
+      return NextResponse.json<ApiError>(
+        {
+          ok: false,
+          error: {
+            code: "RATE_LIMITED",
+            message:
+              "You've reached the free analysis limit. Please try again later.",
+          },
+        },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(retryAfter),
+            "X-RateLimit-Limit": String(rl.limit),
+            "X-RateLimit-Remaining": String(rl.remaining),
+          },
+        }
       );
     }
   } catch (err) {
@@ -105,7 +123,16 @@ export async function POST(req: NextRequest) {
       jobDescription,
     });
     await logUsage("analyze");
-    return NextResponse.json<AnalyzeApiResponse>({ ok: true, result });
+    return NextResponse.json<AnalyzeApiResponse>(
+      { ok: true, result },
+      {
+        headers: {
+          "Cache-Control": "no-store",
+          "X-RateLimit-Limit": String(rl.limit),
+          "X-RateLimit-Remaining": String(rl.remaining),
+        },
+      }
+    );
   } catch (err) {
     console.error("Analysis failed:", err);
     return errorResponse(

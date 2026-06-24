@@ -59,8 +59,10 @@ export function computeScores(
   ).length;
 
   // Bullets / lines that contain a number or percentage (quantified impact).
+  // Counts percentages, currency (₹/$), and numeric magnitudes, but excludes
+  // bare 4-digit values (usually calendar years, not achievements).
   const quantifiedBullets = (
-    resumeText.match(/(\d+\s?%|\$\s?\d|\b\d{2,}\b)/g) || []
+    resumeText.match(/(\d+\s?%|[₹$]\s?\d|\b\d{2,3}\b|\b\d{5,}\b)/g) || []
   ).length;
 
   // ── ATS score: parse-ability, structure, contact, length ──
