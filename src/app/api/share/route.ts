@@ -3,7 +3,7 @@ import { analysisResultSchema } from "@/lib/validation";
 import { createSharedResult } from "@/lib/analysis/share";
 import { isKvConfigured } from "@/lib/kv";
 import { logUsage } from "@/lib/usage";
-import { siteConfig } from "@/config/site";
+import { getBaseUrl } from "@/lib/url";
 import { FEATURES } from "@/lib/features";
 import type { AnalysisResult, ApiError } from "@/types/analysis";
 
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
       );
     }
     await logUsage("share");
-    const url = `${siteConfig.url}/result/${token}`;
+    const url = `${getBaseUrl(req.headers)}/result/${token}`;
     return NextResponse.json({ ok: true, token, url });
   } catch (err) {
     console.error("Share creation failed:", err);

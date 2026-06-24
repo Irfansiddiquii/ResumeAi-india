@@ -3,6 +3,7 @@ import { z } from "zod";
 import { buildHtmlReport } from "@/lib/report/html-report";
 import { buildPdfReport } from "@/lib/report/pdf-report";
 import { logUsage } from "@/lib/usage";
+import { getBaseUrl } from "@/lib/url";
 import type { AnalysisResult } from "@/types/analysis";
 import type { ApiError } from "@/types/analysis";
 
@@ -69,6 +70,7 @@ export async function POST(req: NextRequest) {
   }
   const result = parsed.data as AnalysisResult;
   await logUsage("download");
+  const baseUrl = getBaseUrl(req.headers);
 
   const safeName =
     result.resumeFilename.replace(/\.[^.]+$/, "").replace(/[^a-z0-9-_]+/gi, "_") ||
@@ -76,7 +78,7 @@ export async function POST(req: NextRequest) {
 
   try {
     if (format === "html") {
-      const html = buildHtmlReport(result);
+      const html = buildHtmlReport(result, baseUrl);
       return new NextResponse(html, {
         status: 200,
         headers: {
@@ -86,7 +88,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const pdf = await buildPdfReport(result);
+    const pdf = await buildPdfReport(result, baseUrl);
     return new NextResponse(new Uint8Array(pdf), {
       status: 200,
       headers: {
