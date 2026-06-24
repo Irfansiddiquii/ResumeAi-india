@@ -60,3 +60,36 @@ export function validateResumeFile(file: {
     error: "Unsupported file type. Please upload a PDF or DOCX resume.",
   };
 }
+
+
+// ── Analysis result payload validation ───────────────────────
+// Used by /api/share and /api/report to validate a result posted from the
+// client (Phase 1/2 have no server-side persistence of the original analysis).
+const suggestionSchema = z.object({
+  title: z.string(),
+  before: z.string().optional(),
+  after: z.string().optional(),
+});
+
+export const analysisResultSchema = z.object({
+  id: z.string().max(64),
+  shareToken: z.string().max(64).optional(),
+  createdAt: z.string(),
+  resumeFilename: z.string().max(300),
+  hasJobDescription: z.boolean(),
+  scores: z.object({
+    ats: z.number(),
+    strength: z.number(),
+    match: z.number().nullable(),
+  }),
+  missingKeywords: z.array(z.string()).max(100),
+  matchedKeywords: z.array(z.string()).max(100),
+  strengths: z.array(z.string()).max(50),
+  weaknesses: z.array(z.string()).max(50),
+  recommendations: z.array(suggestionSchema).max(50),
+  optimizedResume: z.object({
+    summary: z.string(),
+    bullets: z.array(z.string()).max(50),
+  }),
+  engine: z.enum(["gemini", "rule-based"]),
+});

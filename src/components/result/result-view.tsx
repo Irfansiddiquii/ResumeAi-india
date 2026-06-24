@@ -13,6 +13,8 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ScoreRing } from "@/components/result/score-ring";
 import { DownloadReport } from "@/components/result/download-report";
+import { ShareButton } from "@/components/result/share-button";
+import { FEATURES } from "@/lib/features";
 import { SaveReportPrompt } from "@/components/result/save-report-prompt";
 import type { AnalysisResult } from "@/types/analysis";
 
@@ -238,7 +240,10 @@ export function ResultView({ result }: { result: AnalysisResult }) {
               Free, no account required — keep a copy of your analysis.
             </p>
           </div>
-          <DownloadReport result={result} />
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
+            <DownloadReport result={result} />
+            {FEATURES.SHAREABLE_RESULTS && <ShareButton result={result} />}
+          </div>
         </CardContent>
       </Card>
 

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { buildHtmlReport } from "@/lib/report/html-report";
 import { buildPdfReport } from "@/lib/report/pdf-report";
+import { logUsage } from "@/lib/usage";
 import type { AnalysisResult } from "@/types/analysis";
 import type { ApiError } from "@/types/analysis";
 
@@ -67,6 +68,7 @@ export async function POST(req: NextRequest) {
     return errorResponse("INVALID_RESULT", "Invalid analysis payload.", 400);
   }
   const result = parsed.data as AnalysisResult;
+  await logUsage("download");
 
   const safeName =
     result.resumeFilename.replace(/\.[^.]+$/, "").replace(/[^a-z0-9-_]+/gi, "_") ||

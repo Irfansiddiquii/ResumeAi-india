@@ -12,6 +12,7 @@ import {
   hashIp,
 } from "@/lib/ratelimit";
 import type { ApiError, AnalyzeApiResponse } from "@/types/analysis";
+import { logUsage } from "@/lib/usage";
 
 // pdf-parse + mammoth require the Node.js runtime (not Edge).
 export const runtime = "nodejs";
@@ -103,6 +104,7 @@ export async function POST(req: NextRequest) {
       resumeFilename: file.name,
       jobDescription,
     });
+    await logUsage("analyze");
     return NextResponse.json<AnalyzeApiResponse>({ ok: true, result });
   } catch (err) {
     console.error("Analysis failed:", err);

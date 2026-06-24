@@ -119,8 +119,9 @@ docs/                   ARCHITECTURE.md
 | `POST` | `/api/analyze` | none | Parse resume + score + AI analysis. `multipart/form-data`: `resume` (File), `jobDescription` (optional). Guards: PDF/DOCX, ≤5MB, IP rate limit. |
 | `POST` | `/api/report?format=pdf\|html` | none | Generate a downloadable report from a posted analysis result. |
 | `GET`  | `/api/health` | none | Liveness + which services are configured. |
+| `POST` | `/api/share` | none | Create an opt-in shareable link for a result (stored in Redis, 30-day TTL). 503 if Redis not configured. |
+| `GET`  | `/api/analysis/[id]` | token | Fetch a shared analysis by its share token. |
 | `POST` | `/api/claim` | session | _(Phase 3)_ Attach a guest analysis to a new account. |
-| `GET`  | `/api/analysis/[id]` | session/token | _(Phase 3)_ Fetch a saved/shared analysis. |
 
 ---
 
@@ -145,7 +146,7 @@ Monetization (subscriptions, billing, Razorpay, upgrade modals, premium locks) i
 
 - **Phase 0** ✅ Scaffold, design system, feature flags
 - **Phase 1** ✅ Core analyzer + download (no login) — **done & tested**
-- **Phase 2** ⏳ Share links, richer usage analytics (rate limiting already wired)
+- **Phase 2** ✅ Shareable result links + usage analytics — **done & tested** (rate limiting wired)
 - **Phase 3** ⏳ Optional Supabase auth + dashboard (saved history, progress)
 - **Phase 4** ⏳ SEO expansion, dynamic OG images, a11y + Core Web Vitals pass
 - **Future** Ads → premium optimization / cover letter / interview prep → recruiter marketplace
