@@ -110,7 +110,12 @@ const TECH_DICTIONARY = [
   "finance", "financial modeling", "taxation", "gst", "tally", "auditing",
   "recruitment", "payroll", "project management", "product management",
   "stakeholder management", "communication", "leadership", "teamwork",
-  "problem solving", "analytical",
+  "problem solving", "analytical", "talent acquisition", "employee engagement",
+  "performance management", "hr operations", "onboarding",
+  "financial modeling", "financial analysis", "financial reporting",
+  "valuation", "forecasting", "budgeting", "variance analysis",
+  "business strategy", "investor relations", "statistics",
+  "data visualization", "user research", "design systems", "social media",
 ];
 
 const TECH_SET = new Set(TECH_DICTIONARY.filter((t) => !t.includes(" ")));
@@ -263,8 +268,8 @@ const CATEGORY_MAP: { category: string; terms: string[] }[] = [
   { category: "Data & DB", terms: ["sql", "mysql", "postgresql", "mongodb", "redis", "cassandra", "dynamodb", "elasticsearch", "oracle", "snowflake", "bigquery"] },
   { category: "Cloud & DevOps", terms: ["docker", "kubernetes", "aws", "azure", "gcp", "terraform", "ansible", "jenkins", "github actions", "ci/cd", "git", "linux", "nginx", "kafka"] },
   { category: "Data & ML", terms: ["tensorflow", "pytorch", "keras", "scikit-learn", "pandas", "numpy", "machine learning", "deep learning", "nlp", "data analysis", "data science", "spark", "hadoop", "tableau", "power bi", "excel"] },
-  { category: "Design", terms: ["figma", "sketch", "adobe xd", "photoshop", "illustrator", "ui/ux", "wireframing", "prototyping"] },
-  { category: "Business", terms: ["salesforce", "sap", "seo", "sem", "crm", "erp", "marketing", "sales", "finance", "accounting", "project management", "product management", "leadership", "communication"] },
+  { category: "Design", terms: ["figma", "sketch", "adobe xd", "photoshop", "illustrator", "ui/ux", "wireframing", "prototyping", "user research", "design systems"] },
+  { category: "Business", terms: ["salesforce", "sap", "seo", "sem", "crm", "erp", "marketing", "sales", "finance", "accounting", "project management", "product management", "leadership", "communication", "talent acquisition", "employee engagement", "performance management", "hr operations", "recruitment", "payroll", "financial modeling", "financial analysis", "valuation", "forecasting", "budgeting", "business strategy", "content marketing", "email marketing", "digital marketing", "social media", "google ads", "google analytics", "copywriting", "stakeholder management"] },
 ];
 
 export function categorizeSkill(displayKw: string): string {

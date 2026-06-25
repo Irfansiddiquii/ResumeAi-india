@@ -14,6 +14,8 @@ const ACTION_VERBS = new Set([
   "orchestrated", "pioneered", "revamped", "saved", "secured", "grew",
   "expanded", "trained", "supervised", "resolved", "eliminated", "enhanced",
   "facilitated", "forecasted", "headed", "modernized", "programmed",
+  "identified", "conducted", "collaborated", "prepared", "presented",
+  "authored", "awarded", "recognized", "ranked", "rolled", "managed",
 ]);
 
 const SECTION_HINTS = [
@@ -100,9 +102,19 @@ export function computeScores(
     if (new RegExp(`\\b${v}\\b`, "i").test(lower)) actionVerbCount++;
   }
 
-  // Quantified achievements (areas 8, 13): bullets carrying real metrics.
-  const QUANT = /(\d+\s?%|[₹$]\s?\d|\b\d{2,3}\b|\b\d{5,}\b)/;
-  const quantifiedAchievements = bulletLines.filter((b) => QUANT.test(b)).length;
+  // Quantified achievements (areas 8, 13): bullets carrying real, measurable
+  // impact. Handles percentages, currency (incl. Indian Rs/INR/lakh/crore),
+  // multipliers (3x, 4.2x) and counts — while excluding bare calendar years.
+  const isQuantified = (b: string): boolean => {
+    const s = b.toLowerCase();
+    if (/\d+\s?%/.test(s)) return true;
+    if (/(?:₹|\$|rs\.?|inr)\s?\d/.test(s)) return true;
+    if (/\d+(?:\.\d+)?\s?(?:lakh|lakhs|crore|crores|cr|k|m|mn|bn|million|billion)\b/.test(s)) return true;
+    if (/\b\d+(?:\.\d+)?x\b/.test(s)) return true;
+    const nums = s.match(/\b\d{2,}\b/g) || [];
+    return nums.some((n) => !(n.length === 4 && /^(?:19|20)\d\d$/.test(n)));
+  };
+  const quantifiedAchievements = bulletLines.filter(isQuantified).length;
 
   // Work timeline
   const yearMatches = (resumeText.match(/\b(?:19|20)\d{2}\b/g) || []).map(Number);
@@ -118,7 +130,7 @@ export function computeScores(
   const hasSkillsSection = /\b(skills|technologies|technical skills|core competenc)/i.test(resumeText);
   const hasEducation = /\b(education|bachelor|master|b\.?\s?tech|b\.?\s?e\b|m\.?\s?tech|mba|b\.?\s?sc|m\.?\s?sc|bca|mca|ph\.?d|university|college|institute of technology|degree)\b/i.test(resumeText);
   const hasDegree = /\b(bachelor|master|b\.?\s?tech|b\.?\s?e\b|m\.?\s?tech|mba|b\.?\s?sc|m\.?\s?sc|bca|mca|ph\.?d)\b/i.test(resumeText);
-  const hasCertifications = /\b(certified|certification|certificate|credential|aws certified|pmp|scrum master|coursera|udemy|nptel|google cloud certified)\b/i.test(resumeText);
+  const hasCertifications = /\b(certified|certification|certificate|credential|aws certified|gcp certified|azure certified|pmp|prince2|itil|scrum master|csm|six sigma|cfa|cpa|frm|\bca\b|coursera|udemy|nptel|google (?:cloud )?certified)\b/i.test(resumeText);
   const projectCount = (lower.match(/\bprojects?\b/g) || []).length;
   const hasProjects = /\bprojects?\b/i.test(resumeText);
 
@@ -139,11 +151,11 @@ export function computeScores(
   const strength =
     ratio(quantifiedAchievements, 5) * 28 + // quantified achievements
     ratio(actionVerbStarts, 5) * 22 + // strong action-verb bullets
-    expDepth * 16 + // experience depth
+    expDepth * 18 + // experience depth
     ratio(skillsCount, 10) * 12 + // skill breadth
     (hasDegree ? 10 : hasEducation ? 6 : 0) + // education
-    (hasProjects ? 7 : 0) + // projects
-    (hasCertifications ? 5 : 0); // certifications
+    (hasProjects ? 6 : 0) + // projects
+    (hasCertifications ? 4 : 0); // certifications
 
   // ── Job match ──
   let match: number | null = null;
