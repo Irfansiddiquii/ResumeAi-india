@@ -20,13 +20,20 @@ export interface GeminiContext {
 // Primary model + automatic fallback model (tried in order before giving up).
 const PRIMARY_MODEL = process.env.GEMINI_MODEL || "gemini-2.0-flash";
 const FALLBACK_MODEL = "gemini-1.5-flash";
-const TIMEOUT_MS = Number(process.env.GEMINI_TIMEOUT_MS || 22000);
+const TIMEOUT_MS = Number(process.env.GEMINI_TIMEOUT_MS || 15000);
 
 export function isGeminiConfigured(): boolean {
   return Boolean(process.env.GEMINI_API_KEY);
 }
 
-// Structured-output schema — forces well-formed, parseable JSON from the model.
+function modelList(): string[] {
+  return PRIMARY_MODEL === FALLBACK_MODEL
+    ? [PRIMARY_MODEL]
+    : [PRIMARY_MODEL, FALLBACK_MODEL];
+}
+
+// Optional structured-output schema. Tried first; if a model/region rejects it
+// we automatically retry the same model in plain JSON mode (more compatible).
 const responseSchema = {
   type: SchemaType.OBJECT,
   properties: {
@@ -48,7 +55,7 @@ const responseSchema = {
     bullets: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
   },
   required: ["strengths", "weaknesses", "recommendations", "summary", "bullets"],
-} as const;
+};
 
 function buildPrompt(ctx: GeminiContext): string {
   const { resumeText, jobDescription, scores, facts } = ctx;
@@ -67,22 +74,18 @@ OUR ENGINE ALREADY COMPUTED THESE SCORES (treat as ground truth — your feedbac
 - Scores: ${scoreLine}
 - Detected facts: ${facts.join("; ") || "none"}
 
-Write feedback that explains and aligns with these scores. For example, if Resume Strength is low, your weaknesses and recommendations should focus on what's dragging it down (missing metrics, weak verbs, thin experience).
+Write feedback that explains and aligns with these scores. If Resume Strength is low, focus weaknesses/recommendations on what's dragging it down (missing metrics, weak verbs, thin experience).
 
 STRICT RULES:
-- Be SPECIFIC to THIS resume. Every strength/weakness/recommendation must reference concrete content (a real bullet, section, skill, number, or its absence).
+- Be SPECIFIC to THIS resume. Every point must reference concrete content (a real bullet, section, skill, number, or its absence).
 - NEVER output generic filler like "tailor your resume to the job" without saying exactly what to change.
 - Never fabricate experience, employers, degrees or metrics the candidate does not have.
-- For recommendations, prefer a concrete before/after rewrite drawn from the candidate's actual bullets where possible.
+- For recommendations, prefer a concrete before/after rewrite drawn from the candidate's actual bullets.
 - The optimized summary must reflect the candidate's real role, seniority and top skills.
-- Keep each item concise (one sentence).
+- Keep each item to one concise sentence.
 
-Produce:
-- strengths: 3-5 specific strengths
-- weaknesses: 3-5 specific weaknesses
-- recommendations: 4-6 concrete fixes, each { title, and optional before/after }
-- summary: a 2-3 sentence ATS-friendly professional summary tailored to this candidate
-- bullets: 4-6 rewritten, quantified, action-verb bullet points based on their real experience
+Return ONLY a JSON object with this exact shape:
+{"strengths":string[],"weaknesses":string[],"recommendations":[{"title":string,"before"?:string,"after"?:string}],"summary":string,"bullets":string[]}
 
 RESUME:
 """
@@ -135,26 +138,47 @@ function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
   ]);
 }
 
+interface GenConfig {
+  temperature: number;
+  responseMimeType: string;
+  responseSchema?: typeof responseSchema;
+}
+
 async function runModel(
   genAI: GoogleGenerativeAI,
   modelName: string,
-  prompt: string
+  prompt: string,
+  useSchema: boolean
 ): Promise<GeminiNarrative> {
+  const generationConfig: GenConfig = {
+    temperature: 0.4,
+    responseMimeType: "application/json",
+  };
+  if (useSchema) generationConfig.responseSchema = responseSchema;
+
   const model = genAI.getGenerativeModel({
     model: modelName,
-    generationConfig: {
-      temperature: 0.4,
-      responseMimeType: "application/json",
-      responseSchema: responseSchema as never,
-    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    generationConfig: generationConfig as any,
   });
   const result = await withTimeout(model.generateContent(prompt), TIMEOUT_MS);
   return parseNarrative(result.response.text());
 }
 
 /**
- * Run AI analysis with Gemini (primary model, then a fallback model). Throws on
- * total failure so the caller can fall back to the deterministic engine.
+ * Build the attempt matrix: each model is tried first with the structured
+ * schema, then in plain JSON mode (more broadly compatible). This makes the
+ * integration resilient to a model/region rejecting responseSchema.
+ */
+function attempts(): { model: string; schema: boolean }[] {
+  const out: { model: string; schema: boolean }[] = [];
+  for (const m of modelList()) for (const schema of [true, false]) out.push({ model: m, schema });
+  return out;
+}
+
+/**
+ * Run AI analysis with Gemini across the attempt matrix. Throws on total
+ * failure so the caller can fall back to the deterministic engine.
  */
 export async function geminiAnalysis(ctx: GeminiContext): Promise<GeminiNarrative> {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -162,16 +186,46 @@ export async function geminiAnalysis(ctx: GeminiContext): Promise<GeminiNarrativ
 
   const genAI = new GoogleGenerativeAI(apiKey);
   const prompt = buildPrompt(ctx);
-  const models = PRIMARY_MODEL === FALLBACK_MODEL ? [PRIMARY_MODEL] : [PRIMARY_MODEL, FALLBACK_MODEL];
 
   let lastErr: unknown;
-  for (const m of models) {
+  for (const a of attempts()) {
     try {
-      return await runModel(genAI, m, prompt);
+      return await runModel(genAI, a.model, prompt, a.schema);
     } catch (err) {
       lastErr = err;
-      console.error(`Gemini model "${m}" failed:`, err instanceof Error ? err.message : err);
+      console.error(
+        `Gemini attempt failed (model="${a.model}", schema=${a.schema}):`,
+        err instanceof Error ? err.message : err
+      );
     }
   }
   throw lastErr instanceof Error ? lastErr : new Error("Gemini analysis failed");
+}
+
+/**
+ * Lightweight live diagnostic. Returns which model/mode worked, or the exact
+ * upstream error message (no secrets) — used by /api/health?probe=gemini to
+ * surface the real runtime reason when Gemini falls back.
+ */
+export async function geminiProbe(): Promise<{ ok: boolean; model?: string; error?: string }> {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return { ok: false, error: "GEMINI_API_KEY not configured" };
+
+  const genAI = new GoogleGenerativeAI(apiKey);
+  const prompt =
+    'Return ONLY this JSON: {"strengths":["a"],"weaknesses":["b"],"recommendations":[{"title":"c"}],"summary":"s","bullets":["d"]}';
+
+  let lastErr: unknown;
+  for (const a of attempts()) {
+    try {
+      await runModel(genAI, a.model, prompt, a.schema);
+      return { ok: true, model: `${a.model} (${a.schema ? "schema" : "plain-json"})` };
+    } catch (err) {
+      lastErr = err;
+    }
+  }
+  return {
+    ok: false,
+    error: (lastErr instanceof Error ? lastErr.message : String(lastErr)).slice(0, 400),
+  };
 }
